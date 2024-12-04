@@ -48,7 +48,7 @@ document.getElementById('create-form').addEventListener('submit', async function
                 return;
             }
             // Enviar os dados para a rota do backend
-            const response = await fetch('http://localhost:30079/api/createEvent', {
+            const response = await fetch('https://project-ong-back.onrender.com/api/createEvent', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -96,7 +96,7 @@ async function verificarToken() {
 
         try {
             // Enviar os dados para a rota do backend
-            const response = await fetch('http://localhost:30079/api/verificar-token', {
+            const response = await fetch('https://project-ong-back.onrender.com/api/verificar-token', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

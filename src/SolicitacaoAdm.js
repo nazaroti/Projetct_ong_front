@@ -10,7 +10,7 @@ async function fetchEventRequests() {
             return;
         }
 
-        const response = await fetch('http://localhost:30079/api/eventos/em-analise', {
+        const response = await fetch('https://project-ong-back.onrender.com/api/eventos/em-analise', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -100,7 +100,7 @@ async function confirmEvent() {
             return;
         }
 
-        const response = await fetch('http://localhost:30079/api/updateEventStatus', {
+        const response = await fetch('https://project-ong-back.onrender.com/api/updateEventStatus', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
