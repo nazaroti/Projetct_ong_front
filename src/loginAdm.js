@@ -1,3 +1,5 @@
+const API_URL = 'https://nome-do-serviço.onrender.com';
+
 
 document.getElementById('button').addEventListener('click', processaFormLoginAdm);
 
@@ -16,7 +18,7 @@ async function processaFormLoginAdm(event) {
 
 async function loginAdmin(email, password) {
     try {
-        const response = await fetch('http://localhost:30079/adminLogin', {  // URL para o login do admin
+        const response = await fetch('${API_URL}/adminLogin', {  // URL para o login do admin
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
