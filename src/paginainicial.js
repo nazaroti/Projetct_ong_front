@@ -132,7 +132,10 @@ function togglePeople() {
 async function checkUserLoggedIn() {
     const token = localStorage.getItem("token");
 
-    if (!token) return false;
+    if (!token) {
+        console.warn("Token não encontrado. Usuário não está logado.");
+        return false;
+    }
 
     try {
         const response = await fetch("https://project-ong-back.onrender.com/perfil", {
@@ -143,9 +146,11 @@ async function checkUserLoggedIn() {
         });
 
         if (response.ok) {
+            console.log("Usuário autenticado com sucesso.");
             return true; // Usuário está autenticado
         } else {
-           
+            const data = await response.json();
+            console.warn("Falha na autenticação:", data.message || "Erro desconhecido.");
             return false;
         }
     } catch (error) {
@@ -153,6 +158,7 @@ async function checkUserLoggedIn() {
         return false;
     }
 }
+
 
 // Alterna a exibição dos botões com base no status de login
 document.addEventListener("DOMContentLoaded", async function() {
