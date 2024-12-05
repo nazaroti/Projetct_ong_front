@@ -9,44 +9,43 @@ document.addEventListener("DOMContentLoaded", function () {
     fetch(apiUrl)
         .then(response => response.json())
         .then(data => {
+            // Verifica se os dados estão dentro de "rows"
+            const eventos = data.rows || data;
+
             // Verifica se há eventos
-            if (data.length === 0) {
-                // Se não houver eventos, cria e exibe a mensagem de "Sem eventos"
+            if (!eventos || eventos.length === 0) {
                 const noEventsMessage = document.createElement('div');
                 noEventsMessage.classList.add('no-events-message');
                 noEventsMessage.innerHTML = '<p>Não há eventos disponíveis no momento.</p>';
                 workshopsContainer.appendChild(noEventsMessage);
             } else {
-                // Limpa o contêiner para garantir que não há duplicação de eventos
                 workshopsContainer.innerHTML = '';
 
                 // Criar o card para cada evento
-                data.forEach(evento => {
+                eventos.forEach(evento => {
                     const card = document.createElement('div');
                     card.classList.add('card');
 
                     // Formatar a data
-                    const dataObj = new Date(evento.Data);
+                    const dataObj = new Date(evento.data);
                     const dataFormatada = dataObj.toLocaleDateString('pt-BR'); // Exemplo: "01/12/2024"
 
                     // Formatar o horário
-                    const horarioFormatado = evento.Horario.slice(0, 5); // Exibe apenas "HH:MM"
+                    const horarioFormatado = evento.horario.slice(0, 5); // Exibe apenas "HH:MM"
 
                     // Adicionar conteúdo ao card
                     card.innerHTML = `
-                        <h2>${evento.Nome}</h2>
+                        <h2>${evento.nome}</h2>
                         <hr>
                         <p class="info"><i class="fas fa-calendar-alt"></i> Data: ${dataFormatada}</p>
                         <p class="info"><i class="fas fa-clock"></i> Horário: ${horarioFormatado}</p>
-                        <p class="info"><i class="fas fa-map-marker-alt"></i> Local: ${evento.Local}</p>
-                        <p class="info"><i class="fas fa-hourglass-start"></i> Duração: ${evento.Duracao}</p>
-                        <p class="info"><i class="fas fa-users"></i> Vagas: ${evento.Num_Vagas}</p>
-                        <p class="info"><strong>Professor:</strong> ${evento.Nome_Responsavel}</p>
-                        <p class="info"><strong>Descrição:</strong> ${evento.Descricao || '(Adicionar aqui)'}</p>
-                         <button class="button" onclick="inscreverEvento(${evento.ID_Evento})">Inscrever</button>
+                        <p class="info"><i class="fas fa-map-marker-alt"></i> Local: ${evento.local}</p>
+                        <p class="info"><i class="fas fa-hourglass-start"></i> Duração: ${evento.duracao}</p>
+                        <p class="info"><i class="fas fa-users"></i> Vagas: ${evento.num_vagas}</p>
+                        <p class="info"><strong>Professor:</strong> ${evento.nome_responsavel}</p>
+                        <p class="info"><strong>Descrição:</strong> ${evento.descricao || '(Adicionar aqui)'}</p>
+                         <button class="button" onclick="inscreverEvento(${evento.id_evento})">Inscrever</button>
                     `;
-
-                    // Adicionar o card ao contêiner
                     workshopsContainer.appendChild(card);
                 });
             }
@@ -55,6 +54,7 @@ document.addEventListener("DOMContentLoaded", function () {
             console.error('Erro ao buscar eventos:', error);
         });
 });
+
 
 /* Calendário */
 $(document).ready(function() {
