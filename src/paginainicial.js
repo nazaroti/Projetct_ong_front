@@ -1,65 +1,58 @@
-document.addEventListener("DOMContentLoaded", async function () {
+document.addEventListener("DOMContentLoaded", function () {
+    // URL da API
+    const apiUrl = 'https://project-ong-back.onrender.com/api/eventos';
+
     // Contêiner onde os cards serão inseridos
     const workshopsContainer = document.getElementById('workshops-container');
 
     // Função para buscar eventos da API
-    try {
-        const response = await fetch('https://project-ong-back.onrender.com/api/eventos');
-        
-        if (!response.ok) {
-            throw new Error(`Erro na requisição: ${response.status} - ${response.statusText}`);
-        }
+    fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+            // Verifica se os dados estão dentro de "rows"
+            const eventos = data.rows || data;
 
-        const data = await response.json();
-        // Verifica se os dados estão dentro de "rows"
-        const eventos = data.rows || data;
+            // Verifica se há eventos
+            if (!eventos || eventos.length === 0) {
+                const noEventsMessage = document.createElement('div');
+                noEventsMessage.classList.add('no-events-message');
+                noEventsMessage.innerHTML = '<p>Não há eventos disponíveis no momento.</p>';
+                workshopsContainer.appendChild(noEventsMessage);
+            } else {
+                workshopsContainer.innerHTML = '';
 
-        // Verifica se há eventos
-        if (!eventos || eventos.length === 0) {
-            const noEventsMessage = document.createElement('div');
-            noEventsMessage.classList.add('no-events-message');
-            noEventsMessage.innerHTML = '<p>Não há eventos disponíveis no momento.</p>';
-            workshopsContainer.appendChild(noEventsMessage);
-        } else {
-            workshopsContainer.innerHTML = ''; // Limpa qualquer conteúdo existente
+                // Criar o card para cada evento
+                eventos.forEach(evento => {
+                    const card = document.createElement('div');
+                    card.classList.add('card');
 
-            // Criar o card para cada evento
-            eventos.forEach(evento => {
-                const card = document.createElement('div');
-                card.classList.add('card');
+                    // Formatar a data
+                    const dataObj = new Date(evento.data);
+                    const dataFormatada = dataObj.toLocaleDateString('pt-BR'); // Exemplo: "01/12/2024"
 
-                // Formatar a data
-                const dataObj = new Date(evento.data);
-                const dataFormatada = dataObj.toLocaleDateString('pt-BR'); // Exemplo: "01/12/2024"
+                    // Formatar o horário
+                    const horarioFormatado = evento.horario.slice(0, 5); // Exibe apenas "HH:MM"
 
-                // Formatar o horário
-                const horarioFormatado = evento.horario.slice(0, 5); // Exibe apenas "HH:MM"
-
-                // Adicionar conteúdo ao card
-                card.innerHTML = `
-                    <h2>${evento.nome}</h2>
-                    <hr>
-                    <p class="info"><i class="fas fa-calendar-alt"></i> Data: ${dataFormatada}</p>
-                    <p class="info"><i class="fas fa-clock"></i> Horário: ${horarioFormatado}</p>
-                    <p class="info"><i class="fas fa-map-marker-alt"></i> Local: ${evento.local}</p>
-                    <p class="info"><i class="fas fa-hourglass-start"></i> Duração: ${evento.duracao}</p>
-                    <p class="info"><i class="fas fa-users"></i> Vagas: ${evento.num_vagas}</p>
-                    <p class="info"><strong>Professor:</strong> ${evento.nome_responsavel}</p>
-                    <p class="info"><strong>Descrição:</strong> ${evento.descricao || '(Adicionar aqui)'}</p>
-                    <button class="button" onclick="inscreverEvento(${evento.id_evento})">Inscrever</button>
-                `;
-                workshopsContainer.appendChild(card);
-            });
-        }
-    } catch (error) {
-        console.error('Erro ao buscar eventos:', error);
-
-        // Exibe uma mensagem de erro para o usuário
-        const errorMessage = document.createElement('div');
-        errorMessage.classList.add('error-message');
-        errorMessage.innerHTML = '<p>Erro ao carregar eventos. Por favor, tente novamente mais tarde.</p>';
-        workshopsContainer.appendChild(errorMessage);
-    }
+                    // Adicionar conteúdo ao card
+                    card.innerHTML = `
+                        <h2>${evento.nome}</h2>
+                        <hr>
+                        <p class="info"><i class="fas fa-calendar-alt"></i> Data: ${dataFormatada}</p>
+                        <p class="info"><i class="fas fa-clock"></i> Horário: ${horarioFormatado}</p>
+                        <p class="info"><i class="fas fa-map-marker-alt"></i> Local: ${evento.local}</p>
+                        <p class="info"><i class="fas fa-hourglass-start"></i> Duração: ${evento.duracao}</p>
+                        <p class="info"><i class="fas fa-users"></i> Vagas: ${evento.num_vagas}</p>
+                        <p class="info"><strong>Professor:</strong> ${evento.nome_responsavel}</p>
+                        <p class="info"><strong>Descrição:</strong> ${evento.descricao || '(Adicionar aqui)'}</p>
+                         <button class="button" onclick="inscreverEvento(${evento.id_evento})">Inscrever</button>
+                    `;
+                    workshopsContainer.appendChild(card);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao buscar eventos:', error);
+        });
 });
 
 
@@ -78,14 +71,9 @@ $(document).ready(function() {
                 success: function(data) {
                     // Mapear os dados da API para o formato que o FullCalendar espera
                     var events = data.map(function(event) {
-                        // Corrigir a data para o formato adequado
-                        var startDate = new Date(event.Data); // Criando um objeto Date
-                        startDate.setHours(event.Horario.split(':')[0]); // Definindo a hora
-                        startDate.setMinutes(event.Horario.split(':')[1]); // Definindo os minutos
-
                         return {
                             title: event.Nome,
-                            start: startDate.toISOString(), // Usando o formato ISO para FullCalendar
+                            start: event.Data, // FullCalendar aceita strings no formato ISO 8601 diretamente
                             description: event.Descricao,
                             location: event.Local,
                             duration: event.Duracao,
