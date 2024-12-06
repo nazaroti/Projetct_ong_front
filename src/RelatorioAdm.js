@@ -116,6 +116,8 @@ async function showEvents(eventos) {
                 `;
             } else if (evento.status === 'reprovado') {
                 buttonsHtml = `
+                    <button class="event-card-button info" name="info" value="info"
+                        onclick='showModal(event, ${JSON.stringify(evento)})'>Detalhes</button>
                     <a class=" event-card-button reject" name="reject" value="reject">Reprovado</a>
                 `;
             }
