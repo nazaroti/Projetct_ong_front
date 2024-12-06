@@ -24,10 +24,14 @@
     font-size: 30px;
 }
 
+#create-form label{
+    color: #94b925;
+}
+
 /* Estilo do título */
 #create-form h2#modal-title {
     font-size: 40px;
-    color: #000000;
+    color: #94b925;
     text-align: center;
     margin-bottom: 10px;
     margin-top: 20px;
@@ -41,25 +45,79 @@
 #create-form input[type="date"],
 #create-form input[type="time"],
 #create-form input[type="number"],
-#create-form textarea,
+#create-form textarea,  
 #create-form select {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #cccccc;
-    border-radius: 6px;
-    color: #333333;
+    padding: 12px 15px; /* Margem interna mais espaçada */
+    border: 1px solid #89ad1d; /* Cor do contorno mais suave */
+    border-radius: 8px; /* Bordas mais arredondadas */
+    background-color: #f9f9f9; /* Fundo claro */
+    color: #444444; /* Texto mais escuro */
     outline: none;
-    transition: border-color 0.3s ease-in-out;
-    font-size: 30px;
-    background-color: #92b81e13;
+    font-size: 16px; /* Tamanho de fonte mais elegante */
+    transition: all 0.3s ease; /* Transição suave para várias propriedades */
+    box-shadow: 0px 2px 4px rgba(255, 0, 0, 0.1); /* Sombra leve */
 }
+
+/* Foco nos campos */
+#create-form input[type="text"]:focus,
+#create-form input[type="date"]:focus,
+#create-form input[type="time"]:focus,
+#create-form input[type="number"]:focus,
+#create-form textarea:focus,
+#create-form select:focus {
+    border-color: #89ad1d; /* Cor de destaque ao focar */
+    background-color: #fff; /* Fundo branco */
+    box-shadow: 0px 4px 8px #82a8185e; /* Sombra mais intensa */
+}
+
+/* Placeholders estilizados */
+#create-form input::placeholder,
+#create-form textarea::placeholder {
+    color: #bbbbbb; /* Cor suave para o placeholder */
+    font-style: italic;
+}
+
+/* Hover nos campos */
+#create-form input[type="text"]:hover,
+#create-form input[type="date"]:hover,
+#create-form input[type="time"]:hover,
+#create-form input[type="number"]:hover,
+#create-form textarea:hover,
+#create-form select:hover {
+    border-color: #89ad1d; /* Cor mais viva ao passar o mouse */
+}
+
+/* Campos obrigatórios com borda diferenciada */
+#create-form input:required,
+#create-form textarea:required,
+#create-form select:required {
+    border-left: 4px solid #89ad1d; /* Borda lateral para campos obrigatórios */
+}
+
+/* Melhorando o select */
+#create-form select {
+    background-image: linear-gradient(45deg, transparent 50%, #89ad1d 50%), 
+                      linear-gradient(135deg, #89ad1d 50%, transparent 50%);
+    background-position: calc(100% - 20px) calc(1em + 2px), calc(100% - 15px) calc(1em + 2px);
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+    padding-right: 30px;
+}
+
+/* Campos de texto maiores (textarea) */
+#create-form textarea {
+    min-height: 120px;
+    resize: vertical; /* Permite ajustar a altura */
+}
+
 
 /* Efeito hover e focus nos inputs */
 #create-form input:focus,
 #create-form textarea:focus,
 #create-form select:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+    border-color: #89ad1d;
+    box-shadow: 0 0 5px #89ad1d;
 }
 
 /* Estilo para textarea */

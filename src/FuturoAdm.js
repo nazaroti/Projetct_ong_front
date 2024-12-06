@@ -22,38 +22,44 @@ async function fetchFutureEvents() {
 
         const eventos = await response.json();
 
-
-
         const container = document.getElementById('event-cards-container');
         container.innerHTML = '';
 
+        if (!eventos || eventos.length === 0) {
+            container.innerHTML = `
+                <div class="event-card-content">
+                    <h3 class="event-card-title">Nenhum evento encontrado.</h3>
+                </div>
+            `;
+        }
+
         eventos.forEach(evento => {
-            const horarioSemSegundos = evento.Horario.slice(0, 5);
-            const dataInvertida = evento.Data.split("-").reverse().join("/");
+            const horarioSemSegundos = evento.horario.slice(0, 5);
+            const dataInvertida = evento.data.split("-").reverse().join("/");
             const card = document.createElement('div');
             card.className = 'event-card';
             card.id = 'upcoming-events-card';
 
             card.innerHTML = `
                 <div class="event-card-content">
-                    <h3 class="event-card-title">🎈 ${evento.Nome}</h3>
+                    <h3 class="event-card-title">🎈 ${evento.nome}</h3>
                     <div class="event-card-info-container">
                         <div class="event-card-info-column">
                             <p><strong>📅Data:</strong> ${dataInvertida}</p>
                             <p><strong>🕒Horário:</strong> ${horarioSemSegundos}</p>
-                            <p><strong>🗺️Local:</strong> ${evento.Local}</p>
+                            <p><strong>🗺️Local:</strong> ${evento.local}</p>
                         </div>
                         <div class="event-card-info-column">
-                            <p><strong>⏳Duração: ${evento.Duracao}</strong></p>
-                            <p><strong>👥Vagas: </strong> ${evento.Num_Vagas}</p>
-                            <p><strong>🙋Responsável:</strong> ${evento.Nome_Responsavel}</p>
+                            <p><strong>⏳Duração:</strong> ${evento.duracao}</p>
+                            <p><strong>👥Vagas: </strong> ${evento.num_vagas}</p>
+                            <p><strong>🙋Responsável:</strong> ${evento.nome_responsavel}</p>
                         </div>
                     </div>
-                    <p class="event-card-description"><strong>Descrição:</strong> ${evento.Descricao}</p>
+                    <p class="event-card-description"><strong>Descrição:</strong> ${evento.descricao}</p>
                 </div>
                 <div class="event-card-buttons">
                     <button class="event-card-button reject" name="reject" value="delete"
-                        onclick="showModal(event, this.value, ${evento.ID_Evento})">Excluir</button>
+                        onclick="showModal(event, this.value, ${evento.id_evento})">Excluir</button>
                     <button class="event-card-button accept" name="approve" value="edit"
                         onclick='showModalEdit(event, ${JSON.stringify(evento)})'>Editar</button>
                 </div>
@@ -70,20 +76,20 @@ function showModalEdit(event, data) {
 
     const parsedData = data;
 
-    console.log("ID: " + data.ID_Evento);
-    console.log("Nome " + data.Nome);
+    console.log("ID: " + data.id_evento);
+    console.log("Nome " + data.nome);
 
-    document.getElementById('modal-title').textContent = "Editar Evento: " + parsedData.Nome;
-    document.getElementById('event_ID').value = parsedData.ID_Evento;
-    document.getElementById('event_name').value = parsedData.Nome;
-    document.getElementById('event_description').value = parsedData.Descricao;
-    document.getElementById('event_status').value = parsedData.Status;
-    document.getElementById('event_date').value = parsedData.Data;
-    document.getElementById('event_time').value = parsedData.Horario;
-    document.getElementById('event_slots').value = parsedData.Num_Vagas;
-    document.getElementById('event_location').value = parsedData.Local;
-    document.getElementById('event_duration').value = parsedData.Duracao;
-    document.getElementById('event_responsible').value = parsedData.Nome_Responsavel;
+    document.getElementById('modal-title').textContent = "Editar Evento: " + parsedData.nome;
+    document.getElementById('event_ID').value = parsedData.id_evento;
+    document.getElementById('event_name').value = parsedData.nome;
+    document.getElementById('event_description').value = parsedData.descricao;
+    document.getElementById('event_status').value = parsedData.status;
+    document.getElementById('event_date').value = parsedData.data;
+    document.getElementById('event_time').value = parsedData.horario;
+    document.getElementById('event_slots').value = parsedData.num_vagas;
+    document.getElementById('event_location').value = parsedData.local;
+    document.getElementById('event_duration').value = parsedData.duracao;
+    document.getElementById('event_responsible').value = parsedData.nome_responsavel;
 
 
     document.getElementById('modal-edit').style.display = 'flex';

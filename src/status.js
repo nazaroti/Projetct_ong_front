@@ -68,42 +68,39 @@ async function loadUserEvents() {
     function formatDate(dateString) {
         const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
         const date = new Date(dateString);
-        return date.toLocaleDateString('pt-BR', options); // Formato dia/mês/ano (ex: 15/11/2024)
+        return date.toLocaleDateString('pt-BR', options); // Formato dia/mês/ano
     }
 
     try {
         const response = await fetch(`https://project-ong-back.onrender.com/api/eventos2?userId=${userId}`, {
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`, // Token armazenado no localStorage ou outra fonte
+                'Authorization': `Bearer ${localStorage.getItem('token')}`, 
                 'Content-Type': 'application/json',
             },
         });
-        console.log("Resposta da API:", response);  // Log da resposta da API
+
+        // Verifica se a resposta da API foi bem-sucedida
+        if (!response.ok) {
+            throw new Error(`Erro na requisição: ${response.statusText}`);
+        }
+
         const events = await response.json();
-        console.log("Eventos retornados:", events);  // Log dos eventos recebidos
+        console.log("Eventos retornados:", events);
 
         const container = document.querySelector(".card-container");
+        container.innerHTML = ''; // Limpa o conteúdo anterior
 
-        // Limpa o conteúdo anterior
-        container.innerHTML = '';
-
-       
-        // Renderiza cada evento no DOM
+        // Renderiza cada evento
         events.forEach(event => {
-            if (event.ID_Usuario !== userId) return; // Filtrar eventos que pertencem ao usuário
-
-            const isEditable = event.Status === "em analise";
+            const isEditable = event.status === "em analise";
 
             // Define o texto de status em português
-            let statusText = '';
-            if (event.Status === 'em analise') {
-                statusText = 'EM ANÁLISE';
-            } else if (event.Status === 'aprovado') {
-                statusText = 'APROVADO';
-            } else if (event.Status === 'reprovado') {
-                statusText = 'REPROVADO';
-            }
+            const statusText = {
+                'em analise': 'EM ANÁLISE',
+                'aprovado': 'APROVADO',
+                'reprovado': 'REPROVADO',
+            }[event.status] || 'INDEFINIDO';
 
             const card = document.createElement("div");
             card.classList.add("card");
@@ -111,46 +108,45 @@ async function loadUserEvents() {
             card.innerHTML = `
                 <div class="card-header">
                     <div class="status-icon">
-                        <i class="fa ${event.Status === 'em analise' ? 'fa-spinner' :
-                    event.Status === 'aprovado' ? 'fa-check-circle' :
-                        event.Status === 'reprovado' ? 'fa-times-circle' : ''
-                }"></i>
+                        <i class="fa ${{
+                            'em analise': 'fa-spinner',
+                            'aprovado': 'fa-check-circle',
+                            'reprovado': 'fa-times-circle',
+                        }[event.status] || ''}"></i>
                     </div>
                     <div class="status-info">
                         <p class="status-text">${statusText}</p>
-                        <p class="card-number">Nº #${event.ID_Evento}</p>
+                        <p class="card-number">Nº #${event.id_evento}</p>
                     </div>
                 </div>
                 <hr>
                 <div class="card-body">
-                    <p><b>${event.Nome}</b></p>
-                     <p>📅 Data: ${formatDate(event.Data)}</p> <!-- Formatação da data -->
-                    <p>⏰ Horário: ${event.Horario}</p>
-                    <p>📍 Local: ${event.Local}</p>
-                    <p>⏳ Duração: ${event.Duracao}</p>
-                    <p>👥 Vagas: ${event.Num_Vagas}</p>
-                    <p>👤 Responsável: ${event.Nome_Responsavel}</p>
-                    <p>📝 Descrição: ${event.Descricao || "(Nenhuma descrição fornecida)"}</p>
+                    <p><b>${event.nome}</b></p>
+                    <p>📅 Data: ${formatDate(event.data)}</p>
+                    <p>⏰ Horário: ${event.horario}</p>
+                    <p>📍 Local: ${event.local}</p>
+                    <p>⏳ Duração: ${event.duracao}</p>
+                    <p>👥 Vagas: ${event.num_vagas}</p>
+                    <p>👤 Responsável: ${event.nome_responsavel}</p>
+                    <p>📝 Descrição: ${event.descricao || "(Nenhuma descrição fornecida)"}</p>
                 </div>
                 <div class="card-footer">
-                    ${isEditable ? '<button class="delete-btn" onclick="deleteEvent(' + event.ID_Evento + ')">EXCLUIR</button>' : ''}
+                    ${isEditable ? `<button class="delete-btn" onclick="deleteEvent(${event.id_evento})">EXCLUIR</button>` : ''}
                 </div>
             `;
 
-            // Insere o card no início do contêiner
-            container.prepend(card);
+            container.prepend(card); // Insere o card no início
         });
-
-        
     } catch (error) {
         console.error("Erro ao carregar eventos:", error);
     }
 }
 
+
 // Função para excluir um evento
 async function deleteEvent(eventId) {
     try {
-        const response = await fetch(`https://project-ong-back.onrender.com/api/eventos/${eventId}`, {
+        const response = await fetch(`https://project-ong-back.onrender.com/api/eventos?eventId=${eventId}`, {
             method: "DELETE",
             headers: {
                 "Authorization": `Bearer ${localStorage.getItem("token")}`

@@ -76,34 +76,45 @@ document.getElementById('filter-form').addEventListener('submit', async (event) 
     }
 });
 
-async function showEvents(eventos){
+async function showEvents(eventos) {
     try {
 
         const container = document.getElementById('event-cards-container');
         container.innerHTML = '';
 
+        if (!eventos || eventos.length === 0) {
+            container.innerHTML = `
+                <div class="event-card-content">
+                    <h3 class="event-card-title">Nenhum evento encontrado.</h3>
+                </div>
+            `;
+            return; // Sai da função, já que não há eventos para exibir
+        }
+
         eventos.forEach(evento => {
+            const horarioSemSegundos = evento.horario.slice(0, 5);
+            const dataInvertida = evento.data.split("-").reverse().join("/");
             const card = document.createElement('div');
             card.className = 'event-card';
             card.id = 'event-report-card';
 
             let buttonsHtml = '';
 
-            if (evento.Status === 'em analise') {
+            if (evento.status === 'em analise') {
                 buttonsHtml = `
-                    <input type="hidden" name="id_event" value="{{ID_Evento}}" />
+                    <input type="hidden" name="id_event" value="{{id_evento}}" />
                     <button class="event-card-button info" name="info" value="info"
-                        onclick="showModal(event, ${JSON.stringify(evento)})">Detalhes</button>
+                        onclick='showModal(event, ${JSON.stringify(evento)})'>Detalhes</button>
                 `;
-            } else if (evento.Status === 'aprovado') {
+            } else if (evento.status === 'aprovado') {
                 buttonsHtml = `
-                    <input type="hidden" name="id_event" value="{{ID_Evento}}" />
+                    <input type="hidden" name="id_event" value="{{id_evento}}" />
                     <button class="event-card-button info" name="info" value="info"
                         onclick='showModal(event, ${JSON.stringify(evento)})'>Detalhes</button>
                     <button class="event-card-button participant" name="participant" value="view"
-                        onclick="fetchParticipants(${evento.ID_Evento})">Participantes</button>
+                        onclick="fetchParticipants(${evento.id_evento})">Participantes</button>
                 `;
-            } else if (evento.Status === 'reprovado') {
+            } else if (evento.status === 'reprovado') {
                 buttonsHtml = `
                     <a class=" event-card-button reject" name="reject" value="reject">Reprovado</a>
                 `;
@@ -111,10 +122,10 @@ async function showEvents(eventos){
 
             card.innerHTML = `
                 <div class="event-card-content">
-                        <h3 class="event-card-title">🎈 ${evento.Nome}</h3>
+                        <h3 class="event-card-title">🎈 ${evento.nome}</h3>
                         <div class="event-card-info-container">
                             <div class="event-card-info-column">
-                                <p><strong>📅${evento.Data} 🕒${evento.Horario} 🗺️${evento.Local}</strong>
+                                <p><strong>📅${dataInvertida} 🕒${horarioSemSegundos} 🗺️${evento.local}</strong>
                                 </p>
                             </div>
                         </div>
@@ -124,7 +135,7 @@ async function showEvents(eventos){
                 </div>
             `;
 
-            
+
             container.appendChild(card);
         })
     } catch (error) {
@@ -156,6 +167,9 @@ async function fetchParticipants(eventId) {
             throw new Error('Erro ao buscar participantes');
         }
         const data = await response.json();
+        console.log("Dados recebidos da API:", data);
+
+
 
         if (data.participants && data.participants.length > 0) {
             displayParticipantsModal(data.participants);
@@ -191,22 +205,22 @@ function showModal(event, data) {
 
     const parsedData = data;
 
-    console.log("ID: " + parsedData.ID_Evento);
-    console.log("Nome: " + parsedData.Nome);
+    console.log("ID: " + parsedData.id_evento);
+    console.log("Nome: " + parsedData.nome);
 
-    const horarioSemSegundos = parsedData.Horario.slice(0, 5);
-    const dataInvertida = parsedData.Data.split("-").reverse().join("/");
+    const horarioSemSegundos = parsedData.horario.slice(0, 5);
+    const dataInvertida = parsedData.data.split("-").reverse().join("/");
 
-    document.getElementById('modal-title').textContent = parsedData.Nome;
-    document.getElementById('event_id').value = parsedData.ID_Evento;
-    document.getElementById('event_description').textContent = parsedData.Descricao;
+    document.getElementById('modal-title').textContent = parsedData.nome;
+    document.getElementById('event_id').value = parsedData.id_evento;
+    document.getElementById('event_description').textContent = parsedData.descricao;
     document.getElementById('event_date').textContent = dataInvertida;
     document.getElementById('event_time').textContent = horarioSemSegundos;
-    document.getElementById('event_slots').textContent = parsedData.Num_Vagas;
-    document.getElementById('event_location').textContent = parsedData.Local;
-    document.getElementById('event_duration').textContent = parsedData.Duracao;
-    document.getElementById('event_responsible').textContent = parsedData.Nome_Responsavel;
-    document.getElementById('event_status').textContent = parsedData.Status || "Status não disponível"; // Se o status não estiver disponível, usa uma mensagem padrão
+    document.getElementById('event_slots').textContent = parsedData.num_vagas;
+    document.getElementById('event_location').textContent = parsedData.local;
+    document.getElementById('event_duration').textContent = parsedData.duracao;
+    document.getElementById('event_responsible').textContent = parsedData.nome_responsavel;
+    document.getElementById('event_status').textContent = parsedData.status || "Status não disponível"; // Se o status não estiver disponível, usa uma mensagem padrão
 
     document.getElementById('modal').style.display = 'flex';
 }

@@ -26,29 +26,39 @@ async function fetchEventRequests() {
         const container = document.getElementById('event-cards-container');
         container.innerHTML = ''; // Limpa os cards anteriores
 
+        if (!eventos || eventos.length === 0) {
+            container.innerHTML = `
+                <div class="event-card-content">
+                    <h3 class="event-card-title nullEvents">Nenhum evento encontrado.</h3>
+                </div>
+            `;
+        }
+
         eventos.forEach(evento => {
+            const horarioSemSegundos = evento.horario.slice(0, 5);
+            const dataInvertida = evento.data.split("-").reverse().join("/");
             const card = document.createElement('div');
             card.className = 'event-card';
 
             card.innerHTML = `
                 <div class="event-card-content">
-                    <h3 class="event-card-title">🎈 ${evento.Nome}</h3>
-                    <p class="event-card-info"><strong>📅 Data:</strong> ${evento.Data}</p>
-                    <p class="event-card-info"><strong>🕒 Horário:</strong> ${evento.Horario}</p>
-                    <p class="event-card-info"><strong>🗺️ Local:</strong> ${evento.Local}</p>
-                    <p class="event-card-info"><strong>⏳ Duração:</strong> ${evento.Duracao}</p>
-                    <p class="event-card-info"><strong>👥 Vagas:</strong> ${evento.Num_Vagas}</p>
-                    <p class="event-card-info"><strong>🙋 Responsável:</strong> ${evento.Nome_Responsavel}</p>
-                    <p class="event-card-description"><strong>Descrição:</strong> ${evento.Descricao}</p>
+                    <h3 class="event-card-title">🎈 ${evento.nome}</h3>
+                    <p class="event-card-info"><strong>📅 Data:</strong> ${dataInvertida}</p>
+                    <p class="event-card-info"><strong>🕒 Horário:</strong> ${horarioSemSegundos}</p>
+                    <p class="event-card-info"><strong>🗺️ Local:</strong> ${evento.local}</p>
+                    <p class="event-card-info"><strong>⏳ Duração:</strong> ${evento.duracao}</p>
+                    <p class="event-card-info"><strong>👥 Vagas:</strong> ${evento.num_vagas}</p>
+                    <p class="event-card-info"><strong>🙋 Responsável:</strong> ${evento.nome_responsavel}</p>
+                    <p class="event-card-description"><strong>Descrição:</strong> ${evento.descricao}</p>
                 </div>
                 <div class="event-card-buttons">
                     <form>
                         <button class="event-card-button reject" name="reject" value="reject"
-                            onclick="showModal(event, 'reject', ${evento.ID_Evento})">Recusar</button>
+                            onclick="showModal(event, 'reject', ${evento.id_evento})">Recusar</button>
                     </form>
                     <form>
                         <button class="event-card-button accept" name="approve" value="approve"
-                            onclick="showModal(event, 'approve', ${evento.ID_Evento})">Aceitar</button>
+                            onclick="showModal(event, 'approve', ${evento.id_evento})">Aceitar</button>
                     </form>
                 </div>
             `;

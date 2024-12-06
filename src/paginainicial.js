@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(data => {
             // Verifica se os dados estão dentro de "rows"
             const eventos = data.rows || data;
+            console.log(eventos);
 
             // Verifica se há eventos
             if (!eventos || eventos.length === 0) {
@@ -21,6 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
             } else {
                 workshopsContainer.innerHTML = '';
 
+                console.log(eventos);
                 // Criar o card para cada evento
                 eventos.forEach(evento => {
                     const card = document.createElement('div');
@@ -72,12 +74,12 @@ $(document).ready(function() {
                     // Mapear os dados da API para o formato que o FullCalendar espera
                     var events = data.map(function(event) {
                         return {
-                            title: event.Nome,
-                            start: event.Data, // FullCalendar aceita strings no formato ISO 8601 diretamente
-                            description: event.Descricao,
-                            location: event.Local,
-                            duration: event.Duracao,
-                            responsible: event.Nome_Responsavel
+                            title: event.nome,
+                            start: event.data, // FullCalendar aceita strings no formato ISO 8601 diretamente
+                            description: event.descricao,
+                            location: event.local,
+                            duration: event.duracao,
+                            responsible: event.nome_responsavel
                         };
                     });
 
@@ -138,15 +140,17 @@ async function checkUserLoggedIn() {
     }
 
     try {
-        const response = await fetch("https://project-ong-back.onrender.com/perfil", {
+        const response = await fetch('https://project-ong-back.onrender.com/perfil', {
             method: "GET",
             headers: {
-                "Authorization": `Bearer ${token}`
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
             }
         });
 
         if (response.ok) {
-            console.log("Usuário autenticado com sucesso.");
+            const data = await response.json();
+            console.log("Usuário autenticado com sucesso:", data);
             return true; // Usuário está autenticado
         } else {
             const data = await response.json();
@@ -158,6 +162,7 @@ async function checkUserLoggedIn() {
         return false;
     }
 }
+
 
 
 // Alterna a exibição dos botões com base no status de login

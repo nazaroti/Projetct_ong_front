@@ -93,12 +93,15 @@ body {
 .option{
     background-color: #91b81e;
     transition: transform 0.2s;
+    cursor: pointer;
 }
 .date{
     background-color: #91b81e;
+    cursor: pointer;
 }
 .filter{
     background-color: #91b81e;
+    cursor: pointer;
 }
 
 .info {

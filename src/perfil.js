@@ -81,7 +81,7 @@ async function salvarPerfil() {
         const telefone = document.getElementById('telefone').value;
         const email = document.getElementById('email').value; // Email não será alterado
 
-        const response = await fetch('https://project-ong-back.onrender.com/perfil', {
+        const response = await fetch('https://project-ong-back.onrender.com/editar-perfil', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -91,7 +91,6 @@ async function salvarPerfil() {
                 nome,
                 sobrenome,
                 telefone,
-                email // Email permanece o mesmo
             })
         });
 
