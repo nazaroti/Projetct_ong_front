@@ -37,6 +37,8 @@ document.getElementById('create-form').addEventListener('submit', async function
             event_responsible: eventResponsible,
         };
 
+        console.log("Numero de Vagas: " + eventSlots);
+
         try {
 
             const token = localStorage.getItem('token');
