@@ -61,6 +61,7 @@ document.getElementById('create-form').addEventListener('submit', async function
 
             if (response.ok) {
                 alert('Evento criado com sucesso!');
+                window.location.href = 'FuturoAdm.html'; 
             } else {
                 const error = await response.json();
                 alert('Erro ao criar evento: ' + (error.message || 'Erro desconhecido.'));
@@ -76,14 +77,13 @@ document.getElementById('create-form').addEventListener('submit', async function
 });
 
 function logout(event) {
-    // Previne o comportamento padrão do link
     event.preventDefault();
 
     // Remover o token do localStorage
-    localStorage.removeItem('token'); // ou sessionStorage.removeItem('token') se for o caso
+    localStorage.removeItem('token'); 
 
     // Redirecionar para a página de login
-    window.location.href = 'index.html'; // Ou qualquer página de login
+    window.location.href = 'index.html'; 
 }
 
 async function verificarToken() {
